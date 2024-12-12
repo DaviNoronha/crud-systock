@@ -3,20 +3,20 @@
 namespace App\Http\Services;
 
 use App\Http\Helpers\LoggingHelper;
-use App\Models\Perfil;
+use App\Http\Interfaces\UserServiceInterface;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class UserService implements ServiceInterface
+class UserService implements UserServiceInterface
 {
     const ENTITY = "usuário";
 
-    public static function getAll() : Collection
+    public static function getAll(): LengthAwarePaginator
     {
         try {
-            return User::orderBy('nome')->get();
+            return User::orderBy('nome')->paginate(10);
         } catch (Throwable $th) {
             LoggingHelper::logAndThrowError($th, self::LIST_ERROR . self::ENTITY . "s");
         }
@@ -63,7 +63,7 @@ class UserService implements ServiceInterface
         }
     }
 
-    public static function delete(User $user)
+    public static function delete(User $user): bool
     {
         try {
             return $user->delete();

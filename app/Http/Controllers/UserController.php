@@ -9,14 +9,16 @@ use App\Http\Resources\UserResource;
 use App\Http\Services\UserService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
-    public function index() : JsonResponse
+    public function index(): JsonResponse
     {
         try {
-            return response()->json(UserResource::collection(UserService::getAll()), Response::HTTP_OK);
+            $users = UserService::getAll();
+            $usersResource = UserResource::collection($users)->response()->getData(true);
+
+            return response()->json($usersResource, Response::HTTP_OK);
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage()
@@ -24,10 +26,13 @@ class UserController extends Controller
         }
     }
 
-    public function store(StoreUserRequest $request) : JsonResponse
+    public function store(StoreUserRequest $request): JsonResponse
     {
         try {
-            return response()->json(new UserResource(UserService::create($request->all())), Response::HTTP_CREATED);
+            $user = UserService::create($request->all());
+            $userResource = new UserResource($user);
+
+            return response()->json($userResource, Response::HTTP_CREATED);
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage()
@@ -35,10 +40,12 @@ class UserController extends Controller
         }
     }
 
-    public function show(User $user) : JsonResponse
+    public function show(User $user): JsonResponse
     {
         try {
-            return response()->json(new UserResource($user), Response::HTTP_OK);
+            $userResource = new UserResource($user);
+
+            return response()->json($userResource, Response::HTTP_OK);
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage()
@@ -46,10 +53,13 @@ class UserController extends Controller
         }
     }
 
-    public function update(UpdateUserRequest $request, User $user) : JsonResponse
+    public function update(UpdateUserRequest $request, User $user): JsonResponse
     {
         try {
-            return response()->json(new UserResource(UserService::update($request->all(), $user)), Response::HTTP_OK);
+            $user = UserService::update($request->all(), $user);
+            $userResource = new UserResource($user);
+
+            return response()->json($userResource, Response::HTTP_OK);
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage()
@@ -57,7 +67,7 @@ class UserController extends Controller
         }
     }
 
-    public function destroy(User $user) : JsonResponse
+    public function destroy(User $user): JsonResponse
     {
         try { 
             UserService::delete($user);
