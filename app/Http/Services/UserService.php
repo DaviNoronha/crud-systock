@@ -2,11 +2,11 @@
 
 namespace App\Http\Services;
 
+use App\Models\User;
 use App\Http\Helpers\LoggingHelper;
 use App\Http\Interfaces\UserServiceInterface;
-use App\Models\User;
+use App\Http\Repositories\UserRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class UserService implements UserServiceInterface
@@ -16,26 +16,25 @@ class UserService implements UserServiceInterface
     public static function getAll(): LengthAwarePaginator
     {
         try {
-            return User::orderBy('nome')->paginate(10);
+            return UserRepository::orderUserByNome();
         } catch (Throwable $th) {
-            LoggingHelper::logAndThrowError($th, self::LIST_ERROR . self::ENTITY . "s");
+            LoggingHelper::logAndThrowError($th, LoggingHelper::LIST_ERROR . self::ENTITY . "s");
         }
     }
 
     public static function getById(string $id): User
     {
         try {
-            return User::findOrFail($id);
+            return UserRepository::getUserById($id);
         } catch (Throwable $th) {
-            LoggingHelper::logAndThrowError($th, self::SHOW_ERROR . self::ENTITY);
+            LoggingHelper::logAndThrowError($th, LoggingHelper::SHOW_ERROR . self::ENTITY);
         }
     }
 
     public static function create(array $request): User
     {
         try {
-            Log::info($request);
-            return User::create([
+            return UserRepository::createUser([
                 'nome'      => $request['nome'],
                 'cpf'       => $request['cpf'],
                 'email'     => $request['email'],
@@ -43,32 +42,32 @@ class UserService implements UserServiceInterface
                 'password'  => bcrypt($request['password']),
             ]);
         } catch (Throwable $th) {
-            LoggingHelper::logAndThrowError($th, self::CREATE_ERROR . self::ENTITY);
+            LoggingHelper::logAndThrowError($th, LoggingHelper::CREATE_ERROR . self::ENTITY);
         }
     }
 
     public static function update(array $request, User $user): User
     {
         try {
-            $user->update([
+            UserRepository::updateUser($user, [
                 'nome'      => $request['nome'],
                 'cpf'       => $request['cpf'],
-                'email'     => isset($request['email']) ? $request['email'] : null,
+                'email'     => $request['email'],
                 'perfil_id' => $request['perfil_id'],
             ]);
 
             return $user;
         } catch (Throwable $th) {
-            LoggingHelper::logAndThrowError($th, self::UPDATE_ERROR . self::ENTITY);
+            LoggingHelper::logAndThrowError($th, LoggingHelper::UPDATE_ERROR . self::ENTITY);
         }
     }
 
     public static function delete(User $user): bool
     {
         try {
-            return $user->delete();
+            return UserRepository::deleteUser($user);
         } catch (Throwable $th) {
-            LoggingHelper::logAndThrowError($th, self::DELETE_ERROR . self::ENTITY);
+            LoggingHelper::logAndThrowError($th, LoggingHelper::DELETE_ERROR . self::ENTITY);
         }
     }
 }

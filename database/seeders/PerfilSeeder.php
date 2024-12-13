@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Perfil;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PerfilSeeder extends Seeder
@@ -16,13 +15,13 @@ class PerfilSeeder extends Seeder
                 'descricao' => 'Administrador'
             ],
             [
-                'nome' => 'mod',
-                'descricao' => 'Moderador'
+                'nome' => 'usuario',
+                'descricao' => 'Usuário'
             ],
         ];
 
         foreach ($perfis as $perfil) {
-            Perfil::create($perfil);
+            Perfil::firstOrCreate($perfil);
         }
     }
 }

@@ -71,6 +71,7 @@ class UserController extends Controller
     {
         try { 
             UserService::delete($user);
+
             return response()->json(['message' => 'Usuário foi deletado com sucesso'], Response::HTTP_OK);
         } catch (\Throwable $th) {
             return response()->json([
