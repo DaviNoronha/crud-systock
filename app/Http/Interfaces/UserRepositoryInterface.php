@@ -7,7 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 interface UserRepositoryInterface
 {
-    public static function orderUserByNome() : LengthAwarePaginator;
+    public static function orderUserByNome(): LengthAwarePaginator;
 
     public static function getUserById(string $id): User;
 

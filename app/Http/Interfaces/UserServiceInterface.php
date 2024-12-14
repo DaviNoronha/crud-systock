@@ -7,7 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 interface UserServiceInterface
 {
-    public static function getAll() : LengthAwarePaginator;
+    public static function getAll(): LengthAwarePaginator;
 
     public static function getById(string $id) : User;
 

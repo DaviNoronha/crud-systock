@@ -26,6 +26,19 @@ class UserController extends Controller
         }
     }
 
+    public function count(): JsonResponse
+    {
+        try {
+            $usersCount = UserService::count();
+
+            return response()->json($usersCount, Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function store(StoreUserRequest $request): JsonResponse
     {
         try {

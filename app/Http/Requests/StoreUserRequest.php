@@ -26,7 +26,7 @@ class StoreUserRequest extends FormRequest
             'cpf' => 'required|string|cpf|min:14|max:14',
             'email' => 'required|string|unique:users,email',
             'password' => 'required|string|min:8',
-            'perfil_id' => 'required|string',
+            'perfil' => 'required|string',
         ];
     }
 }

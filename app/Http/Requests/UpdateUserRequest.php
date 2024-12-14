@@ -26,7 +26,7 @@ class UpdateUserRequest extends FormRequest
             'nome' => 'required|string',
             'cpf' => 'required|string|cpf|min:14|max:14',
             'email' => ['required', Rule::unique('users')->ignore($this->user)],
-            'perfil_id' => 'required|string',
+            'perfil' => 'required|string',
         ];
     }
 }

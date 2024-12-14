@@ -8,8 +8,6 @@ use App\Http\Interfaces\UserRepositoryInterface;
 
 class UserRepository implements UserRepositoryInterface
 {
-    const ENTITY = "usuário";
-
     public static function orderUserByNome(): LengthAwarePaginator
     {
         return User::orderBy('nome')->paginate(10);
