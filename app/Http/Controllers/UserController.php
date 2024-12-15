@@ -8,14 +8,15 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Http\Services\UserService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         try {
-            $users = UserService::getAll();
+            $users = UserService::getAll($request->all());
             $usersResource = UserResource::collection($users)->response()->getData(true);
 
             return response()->json($usersResource, Response::HTTP_OK);

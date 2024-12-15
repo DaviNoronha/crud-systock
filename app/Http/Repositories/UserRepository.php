@@ -8,9 +8,9 @@ use App\Http\Interfaces\UserRepositoryInterface;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public static function orderUserByNome(): LengthAwarePaginator
+    public static function orderUserByNome(int $pagination): LengthAwarePaginator
     {
-        return User::orderBy('nome')->paginate(10);
+        return User::orderBy('nome')->paginate($pagination);
     }
 
     public static function getUserById(string $id): User
@@ -24,6 +24,11 @@ class UserRepository implements UserRepositoryInterface
     }
 
     public static function updateUser(User $user, array $userData): bool
+    {
+        return $user->update($userData);
+    }
+
+    public static function updateUserPassword(User $user, array $userData): bool
     {
         return $user->update($userData);
     }

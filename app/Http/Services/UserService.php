@@ -3,23 +3,25 @@
 namespace App\Http\Services;
 
 use App\Models\User;
+use App\Models\Perfil;
 use App\Http\Helpers\LoggingHelper;
 use App\Http\Interfaces\UserServiceInterface;
 use App\Http\Repositories\PerfilRepository;
 use App\Http\Repositories\UserRepository;
-use App\Models\Perfil;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Exception;
 use Throwable;
 
 class UserService implements UserServiceInterface
 {
     const ENTITY = "usuário";
 
-    public static function getAll(): LengthAwarePaginator
+    public static function getAll(array $request): LengthAwarePaginator
     {
         try {
-            return UserRepository::orderUserByNome();
+            return UserRepository::orderUserByNome($request["pagination"]);
         } catch (Throwable $th) {
             LoggingHelper::logAndThrowError($th, LoggingHelper::LIST_ERROR . self::ENTITY . "s");
         }
@@ -45,6 +47,7 @@ class UserService implements UserServiceInterface
 
     public static function create(array $request): User
     {
+        LoggingHelper::logInfo("Feito por: " . json_encode(Auth::user()) . ". Ação: Cadastrando " . self::ENTITY . ". Request: " . json_encode($request));
         try {
             $perfil = Perfil::where('nome', $request['perfil'])->first();
 
@@ -62,6 +65,7 @@ class UserService implements UserServiceInterface
 
     public static function update(array $request, User $user): User
     {
+        LoggingHelper::logInfo("Feito por: " . json_encode(Auth::user()) . ". Atualizando " . self::ENTITY . ". Request: " . json_encode($request));
         try {
             $perfil = Perfil::where('nome', $request['perfil'])->first();
 
@@ -72,6 +76,10 @@ class UserService implements UserServiceInterface
                 'perfil_id' => $perfil->id,
             ]);
 
+            if ($request['password']) {
+                UserRepository::updateUserPassword($user, ['password' => bcrypt($request['password'])]);
+            }
+
             return $user;
         } catch (Throwable $th) {
             LoggingHelper::logAndThrowError($th, LoggingHelper::UPDATE_ERROR . self::ENTITY);
@@ -80,7 +88,12 @@ class UserService implements UserServiceInterface
 
     public static function delete(User $user): bool
     {
+        LoggingHelper::logInfo("Feito por: " . json_encode(Auth::user()) . ". Excluindo " . self::ENTITY . ". User excluído: " . json_encode($user->toArray()));
         try {
+            if ($user->id == Auth::user()->id) {
+                throw new Exception("Usuário logado não pode excluir a si mesmo");
+            }
+
             return UserRepository::deleteUser($user);
         } catch (Throwable $th) {
             LoggingHelper::logAndThrowError($th, LoggingHelper::DELETE_ERROR . self::ENTITY);

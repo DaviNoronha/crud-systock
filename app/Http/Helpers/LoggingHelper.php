@@ -23,4 +23,9 @@ class LoggingHelper
         ]);
         throw new Exception($message);
     }
+    
+    public static function logInfo(string $message): void
+    {
+        Log::info($message);
+    }
 }
