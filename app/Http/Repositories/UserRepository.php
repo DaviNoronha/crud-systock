@@ -8,9 +8,9 @@ use App\Http\Interfaces\UserRepositoryInterface;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public static function orderUserByNome(int $pagination): LengthAwarePaginator
+    public static function getAllUsers(array $query): LengthAwarePaginator
     {
-        return User::orderBy('nome')->paginate($pagination);
+        return User::orderBy($query['key'] ?? 'nome', $query['order'] ?? 'asc')->paginate($query['pagination']);
     }
 
     public static function getUserById(string $id): User

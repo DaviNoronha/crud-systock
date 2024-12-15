@@ -21,7 +21,7 @@ class UserService implements UserServiceInterface
     public static function getAll(array $request): LengthAwarePaginator
     {
         try {
-            return UserRepository::orderUserByNome($request["pagination"]);
+            return UserRepository::getAllUsers($request);
         } catch (Throwable $th) {
             LoggingHelper::logAndThrowError($th, LoggingHelper::LIST_ERROR . self::ENTITY . "s");
         }
