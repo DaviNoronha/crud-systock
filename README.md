@@ -61,3 +61,8 @@ $ docker exec laravel-api php artisan migrate --seed
 
 * Github: [@DaviNoronha](https://github.com/DaviNoronha)
 * LinkedIn: [@davi-noronha-34ba04267](https://www.linkedin.com/in/davi-noronha-34ba04267/)
+
+## Extra
+- Se tiver com dificuldades para buildar o projeto usando Docker, você pode usar o Laragon caso esteja usando Windows
+- Aplicação web foi inicialmente desenvolvida em outro repositório: [@crud-systock-web](https://github.com/DaviNoronha/crud-systock-web)
+- Depois a aplicação web foi movida para este repositório para implementação do Docker
