@@ -1,8 +1,9 @@
 <h1 align="center">Teste de Desenvolvedor para Systock - Crud de Usuários</h1>
 
-> Uma aplicação com back-end e frontend.<br>
-> API construída usando PHP com Laravel.<br>
-> A aplicação de front-end que consome a API foi feita usando Typescript com Vuetify 3. <br>
+> CRUD de usuários com com autenticação e perfis de acesso;<br>
+> API foi construída usando PHP 8 e Laravel 11;<br>
+> UI foi construída usando Typescript, Vue 3 e Vuetify 3;<br>
+> A base de dados utilizada é o PostgreSQL<br>
 
 ## Prerequisitos
 - Docker
