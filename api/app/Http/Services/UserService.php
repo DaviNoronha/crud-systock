@@ -47,7 +47,6 @@ class UserService implements UserServiceInterface
 
     public static function create(array $request): User
     {
-        LoggingHelper::logInfo("Feito por: " . json_encode(Auth::user()) . ". Ação: Cadastrando " . self::ENTITY . ". Request: " . json_encode($request));
         try {
             $perfil = Perfil::where('nome', $request['perfil'])->first();
 
@@ -65,7 +64,6 @@ class UserService implements UserServiceInterface
 
     public static function update(array $request, User $user): User
     {
-        LoggingHelper::logInfo("Feito por: " . json_encode(Auth::user()) . ". Atualizando " . self::ENTITY . ". Request: " . json_encode($request));
         try {
             $perfil = Perfil::where('nome', $request['perfil'])->first();
 
@@ -88,7 +86,6 @@ class UserService implements UserServiceInterface
 
     public static function delete(User $user): bool
     {
-        LoggingHelper::logInfo("Feito por: " . json_encode(Auth::user()) . ". Excluindo " . self::ENTITY . ". User excluído: " . json_encode($user->toArray()));
         try {
             return UserRepository::deleteUser($user);
         } catch (Throwable $th) {
