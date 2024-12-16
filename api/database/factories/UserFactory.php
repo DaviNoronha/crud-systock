@@ -27,7 +27,7 @@ class UserFactory extends Factory
         $perfilId = Perfil::where('nome', 'usuario')->first()->id;
         return [
             'nome' => fake()->name(),
-            'cpf' => "000.000.000-00",
+            'cpf' => $this->faker->unique()->cpf(true),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => Hash::make('12345678'),

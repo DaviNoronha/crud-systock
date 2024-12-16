@@ -12,4 +12,20 @@ const http: AxiosInstance = axios.create({
   },
 });
 
+http.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    const store = useAuthStore();
+
+    if (error.response?.status === 401) {
+      store.logout();
+      router.push("/login");
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default http;
