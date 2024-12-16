@@ -90,10 +90,6 @@ class UserService implements UserServiceInterface
     {
         LoggingHelper::logInfo("Feito por: " . json_encode(Auth::user()) . ". Excluindo " . self::ENTITY . ". User excluído: " . json_encode($user->toArray()));
         try {
-            if ($user->id == Auth::user()->id) {
-                throw new Exception("Usuário logado não pode excluir a si mesmo");
-            }
-
             return UserRepository::deleteUser($user);
         } catch (Throwable $th) {
             LoggingHelper::logAndThrowError($th, LoggingHelper::DELETE_ERROR . self::ENTITY);

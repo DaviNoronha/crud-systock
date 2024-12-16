@@ -15,8 +15,6 @@
           :items-length="total"
           :loading="loading"
           loading-text="Buscando usuários..."
-          :search="search"
-          item-value="nome"
           :sort-by="sortBy"  
           height="550px"
           @update:options="loadUsers"
@@ -26,17 +24,10 @@
               <v-toolbar-title>
                 <v-icon icon="mdi-account"></v-icon> &nbsp; Usuários
               </v-toolbar-title>
+
               <v-spacer></v-spacer>
 
-              <v-text-field
-                v-model="search"
-                class=""
-                density="compact"
-                placeholder="Buscar por nome..."
-                hide-details
-              ></v-text-field>
-
-              <v-btn color="primary" dark @click="openForm(null)">
+              <v-btn v-if="perfil === 'admin'" color="primary" dark @click="openForm(null)">
                 Cadastrar Usuário
               </v-btn>
             </v-toolbar>
@@ -46,7 +37,7 @@
             {{ formatDate(item.created_at.toString()) }}
           </template>
 
-          <template v-slot:[`item.acoes`]="{ item }">
+          <template v-if="perfil === 'admin'" v-slot:[`item.acoes`]="{ item }">
             <v-icon
               class="me-2 text-green-lighten-1"
               size="small"
@@ -67,8 +58,8 @@
     </v-row>
   </v-container>
 
-  <UserForm @update="loadUsers" :perfis="perfis" ref="userForm" />
-  <UserDelete @update="loadUsers" ref="userDelete" />
+  <UserForm v-if="perfil === 'admin'" @update="loadUsers" :perfis="perfis" ref="userForm" />
+  <UserDelete v-if="perfil === 'admin'" @update="loadUsers" ref="userDelete" />
   <Snackbar ref="snackbar" />
 </template>
 
@@ -79,6 +70,11 @@ import UserDelete from "./UserDelete.vue";
 import Snackbar from "./Snackbar.vue";
 import type User from "@/interfaces/User";
 import type Perfil from "@/interfaces/Perfil";
+import { useAuthStore } from "@/store/auth";
+import { storeToRefs } from "pinia";
+import { getHeaders } from "@/utils/table-headers";
+
+const { perfil } = storeToRefs(useAuthStore());
 
 export default {
   data: () => ({
@@ -86,24 +82,17 @@ export default {
     dialog: false,
     dialogDelete: false,
     sortBy: [{ key: 'nome', order: 'asc' }] as SortItem,
-    headers: [
-      { title: "Nome", key: "nome", align: "start" },
-      { title: "CPF", key: "cpf", align: "end" },
-      { title: "E-mail", key: "email", align: "end" },
-      { title: "Adicionado(a) em", key: "created_at", align: "end" },
-      { title: "Perfil", key: "perfil.descricao", align: "end" },
-      { title: "Ações", key: "acoes", align: "end" },
-    ] as const,
+    headers: getHeaders(perfil),
     users: [] as User[],
     perfis: []as Perfil[],
     loading: true,
     total: 0,
     totalAdmin: 0,
     totalUsuarios: 0,
-    search: "",
     UserForm,
     UserDelete,
     Snackbar,
+    perfil
   }),
 
   mounted() {

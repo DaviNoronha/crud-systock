@@ -1,85 +1,100 @@
 <template>
   <v-dialog v-model="dialog" max-width="900px">
-    <v-card>
+    <v-card prepend-icon="mdi-account" :title="formTitle">
       <v-form validate-on="blur" @submit.prevent="save" ref="form">
-        <v-card-title>
-          <span class="text-h5">{{ formTitle }}</span>
-        </v-card-title>
+        <v-divider></v-divider>
 
         <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12" md="6" sm="6">
-                <v-text-field
-                  v-model="form.nome"
-                  label="Nome"
-                  :error="errors.enabled"
-                  :error-messages="errors.message"
-                  :rules="validateNome"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6" sm="6">
-                <v-text-field
-                  v-model="form.email"
-                  label="E-mail"
-                  :rules="validateEmail"
-                  :error="errors.enabled"
-                  :error-messages="errors.message"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="4" sm="6">
-                <v-text-field
-                  v-model="form.cpf"
-                  label="CPF"
-                  :rules="validateCPF"
-                  :error="errors.enabled"
-                  :error-messages="errors.message"
-                  v-mask="['###.###.###-##']"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="4" sm="6">
-                <v-select
-                  v-model="form.perfil"
-                  :items="perfis"
-                  item-value="nome"
-                  item-title="descricao"
-                  label="Perfil"
-                  :rules="validatePerfil"
-                  :error="errors.enabled"
-                  :error-messages="errors.message"
-                ></v-select>
-              </v-col>
-              <v-col cols="12" md="4" sm="6">
-                <v-text-field
-                  v-model="form.password"
-                  label="Senha"
-                  :rules="rowId ? [] : validatePassword"
-                  :error="errors.enabled"
-                  :error-messages="errors.message"
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
+          <v-row>
+            <v-col cols="12" md="6" sm="6">
+              <v-text-field
+                v-model="form.nome"
+                label="Nome *"
+                :error="errors.enabled"
+                :error-messages="errors.message"
+                :rules="validateNome"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6" sm="6">
+              <v-text-field
+                v-model="form.email"
+                label="E-mail *"
+                :rules="validateEmail"
+                :error="errors.enabled"
+                :error-messages="errors.message"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="4" sm="6">
+              <v-text-field
+                v-model="form.cpf"
+                label="CPF *"
+                :rules="validateCPF"
+                :error="errors.enabled"
+                :error-messages="errors.message"
+                v-mask="['###.###.###-##']"
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="4" sm="6">
+              <v-select
+                v-model="form.perfil"
+                :items="perfis"
+                item-value="nome"
+                item-title="descricao"
+                label="Perfil *"
+                :rules="validatePerfil"
+                :error="errors.enabled"
+                :error-messages="errors.message"
+              ></v-select>
+            </v-col>
+            <v-col cols="12" md="4" sm="6">
+              <v-text-field
+                v-model="form.password"
+                label="Senha *"
+                :rules="rowId ? [] : validatePassword"
+                :error="errors.enabled"
+                :error-messages="errors.message"
+              ></v-text-field>
+            </v-col>
+          </v-row>
         </v-card-text>
+
+        <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="red-darken-1" variant="text" @click="close">
-            Cancelar
-          </v-btn>
-          <v-btn color="blue-darken-1" variant="text" type="submit" :loading="loading">
+          <v-btn
+            color="blue-darken-1"
+            prepend-icon="mdi-content-save"
+            variant="tonal"
+            type="submit"
+            :loading="loading"
+          >
             Salvar
+          </v-btn>
+          <v-btn
+            color="red-darken-1"
+            prepend-icon="mdi-cancel"
+            variant="tonal"
+            @click="close"
+          >
+            Cancelar
           </v-btn>
         </v-card-actions>
       </v-form>
     </v-card>
   </v-dialog>
-  <Snackbar ref="snackbar"/>
+  <Snackbar ref="snackbar" />
 </template>
 
 <script lang="ts">
 import BaseService from "@/services/BaseService";
-import { validateCPF, validateEmail, validateNome, validatePassword, validatePerfil } from "@/utils/rules";
+import {
+  validateCPF,
+  validateEmail,
+  validateNome,
+  validatePassword,
+  validatePerfil,
+} from "@/utils/rules";
 import Snackbar from "./Snackbar.vue";
 
 export default {
@@ -156,39 +171,61 @@ export default {
     },
 
     save() {
-      this.loading = true;
-
       if (!this.$refs.form.isValid) {
         return;
       }
 
+      this.loading = true;
+
       if (!this.rowId) {
-        BaseService.post(`users`, this.form)
-          .then((res) => {
-            this.$refs.snackbar.openSnackbar(true, "Usuário cadastrado com sucesso");
-            this.$emit("update", {page: 1, itemsPerPage: 10, sortBy: [{ key: 'nome', order: 'asc' }]});
-            this.close();
-          })
-          .catch((err) => {
-            this.$refs.snackbar.openSnackbar(false, err.response.data.message);
-          })
-          .finally(() => {
-            this.loading = false;
-          })
+        this.storeUser();
       } else {
-        BaseService.put(`users/${this.rowId}`, this.form)
-          .then((res) => {
-            this.$refs.snackbar.openSnackbar(true, "Usuário atualizado com sucesso");
-            this.$emit("update", {page: 1, itemsPerPage: 10, sortBy: [{ key: 'nome', order: 'asc' }]});
-            this.close();
-          })
-          .catch((err) => {
-            this.$refs.snackbar.openSnackbar(false, err.response.data.message);
-          })
-          .finally(() => {
-            this.loading = false;
-          })
+        this.updateUser()
       }
+    },
+
+    storeUser() {
+      BaseService.post(`users`, this.form)
+        .then((res) => {
+          this.$refs.snackbar.openSnackbar(
+            true,
+            "Usuário cadastrado com sucesso"
+          );
+          this.$emit("update", {
+            page: 1,
+            itemsPerPage: 10,
+            sortBy: [{ key: "nome", order: "asc" }],
+          });
+          this.close();
+        })
+        .catch((err) => {
+          this.$refs.snackbar.openSnackbar(false, err.response.data.message);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+
+    updateUser() {
+      BaseService.put(`users/${this.rowId}`, this.form)
+        .then((res) => {
+          this.$refs.snackbar.openSnackbar(
+            true,
+            "Usuário atualizado com sucesso"
+          );
+          this.$emit("update", {
+            page: 1,
+            itemsPerPage: 10,
+            sortBy: [{ key: "nome", order: "asc" }],
+          });
+          this.close();
+        })
+        .catch((err) => {
+          this.$refs.snackbar.openSnackbar(false, err.response.data.message);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
     },
   },
 };

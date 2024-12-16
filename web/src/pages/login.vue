@@ -8,7 +8,7 @@
       max-width="448"
       rounded="lg"
     >
-      <v-form validate-on="blur" @submit.prevent="fazerLogin(loginForm)" ref="form">
+      <v-form validate-on="blur" @submit.prevent="sendLogin(loginForm)" ref="form">
         <div class="text-subtitle-1 text-medium-emphasis">E-mail</div>
 
         <v-text-field
@@ -50,6 +50,7 @@
           variant="tonal"
           block
           type="submit"
+          :loading="loading"
         >
           Entrar
         </v-btn>
@@ -77,6 +78,7 @@ export default {
     },
     validateEmail,
     validatePassword,
+    loading: false
   }),
 
   methods: {
@@ -87,10 +89,12 @@ export default {
       };
     },
 
-    fazerLogin(loginForm) {
+    sendLogin(loginForm) {
+      this.loading = true;
       if (this.$refs.form.isValid) {
         login(loginForm);
       }
+      this.loading = false;
     },
   },
 };

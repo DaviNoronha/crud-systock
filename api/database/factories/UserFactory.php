@@ -24,7 +24,7 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
-        $perfis = Perfil::pluck('id')->toArray();
+        $perfilId = Perfil::where('nome', 'usuario')->first()->id;
         return [
             'nome' => fake()->name(),
             'cpf' => "000.000.000-00",
@@ -32,7 +32,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => Hash::make('12345678'),
             'remember_token' => Str::random(10),
-            'perfil_id' => $this->faker->randomElement($perfis)
+            'perfil_id' => $perfilId
         ];
     }
 

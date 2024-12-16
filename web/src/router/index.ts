@@ -17,11 +17,16 @@ const router = createRouter({
 router.beforeEach((to) => {
   const store = useAuthStore();
 
+  if (to.path === "/login" && store.isLoggedIn) {
+    store.success();
+    return "/";
+  }
+
   if (to.meta.requiresAuth && !store.isLoggedIn) {
     return "/login";
-  } else {
-    store.success();
   }
+
+  store.success();
 });
 
 // Workaround for https://github.com/vitejs/vite/issues/11804

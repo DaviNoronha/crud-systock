@@ -1,4 +1,6 @@
 import axios, { type AxiosInstance } from "axios";
+import { useAuthStore } from "./store/auth";
+import router from "./router";
 
 const http: AxiosInstance = axios.create({
   baseURL: 'http://localhost:8000/api/',

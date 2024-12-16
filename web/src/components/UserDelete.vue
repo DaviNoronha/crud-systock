@@ -7,11 +7,11 @@
       title="Deseja excluir o usuário?"
     >
       <template v-slot:actions>
-        <v-btn color="blue-darken-1" variant="text" @click="closeDelete"
-          >Cancelar</v-btn
-        >
-        <v-btn color="red-lighten-1" variant="text" @click="deleteUserConfirm" :loading="loading"
+        <v-btn prepend-icon="mdi-trash-can" color="blue-darken-1" variant="tonal" @click="deleteUserConfirm" :loading="loading"
           >Confirmar</v-btn
+        >
+        <v-btn prepend-icon="mdi-cancel" color="red-darken-1" variant="tonal" @click="closeDelete"
+          >Cancelar</v-btn
         >
       </template>
     </v-card>
