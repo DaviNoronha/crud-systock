@@ -14,6 +14,7 @@ export const useAuthStore = defineStore("authStore", {
         enabled: false,
         message: "",
       },
+      loading: false
     };
   },
   getters: {
@@ -23,6 +24,7 @@ export const useAuthStore = defineStore("authStore", {
   },
   actions: {
     async login(loginForm: any) {
+      this.loading = true;
       BaseService.post("login", loginForm)
         .then((response) => {
           localStorage.setItem("token", response.data.token);
@@ -42,6 +44,9 @@ export const useAuthStore = defineStore("authStore", {
             enabled: true,
             message: err.response.data.message,
           };
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     async logout() {

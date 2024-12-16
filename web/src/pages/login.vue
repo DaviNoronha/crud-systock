@@ -8,7 +8,7 @@
       max-width="448"
       rounded="lg"
     >
-      <v-form validate-on="blur" @submit.prevent="sendLogin(loginForm)" ref="form">
+      <v-form validate-on="lazy input" @submit.prevent="sendLogin(loginForm)" ref="form">
         <div class="text-subtitle-1 text-medium-emphasis">E-mail</div>
 
         <v-text-field
@@ -64,7 +64,7 @@ import { useAuthStore } from "@/store/auth";
 import { validateEmail, validatePassword } from "@/utils/rules";
 import { storeToRefs } from "pinia";
 
-const { errors } = storeToRefs(useAuthStore());
+const { errors, loading } = storeToRefs(useAuthStore());
 const { login } = useAuthStore();
 
 export default {
@@ -78,7 +78,7 @@ export default {
     },
     validateEmail,
     validatePassword,
-    loading: false
+    loading
   }),
 
   methods: {
@@ -90,11 +90,9 @@ export default {
     },
 
     sendLogin(loginForm) {
-      this.loading = true;
       if (this.$refs.form.isValid) {
-        login(loginForm);
-      }
-      this.loading = false;
+        login(loginForm)
+      } 
     },
   },
 };

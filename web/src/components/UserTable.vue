@@ -15,8 +15,13 @@
           :items-length="total"
           :loading="loading"
           loading-text="Buscando usuários..."
-          :sort-by="sortBy"  
+          :sort-by="sortBy"
           height="550px"
+          :items-per-page-options="[
+            { value: 10, title: '10' },
+            { value: 25, title: '25' },
+            { value: 50, title: '50' },
+          ]"
           @update:options="loadUsers"
         >
           <template v-slot:top>
@@ -27,7 +32,12 @@
 
               <v-spacer></v-spacer>
 
-              <v-btn v-if="perfil === 'admin'" color="primary" dark @click="openForm(null)">
+              <v-btn
+                v-if="perfil === 'admin'"
+                color="primary"
+                dark
+                @click="openForm(null)"
+              >
                 Cadastrar Usuário
               </v-btn>
             </v-toolbar>
@@ -58,7 +68,12 @@
     </v-row>
   </v-container>
 
-  <UserForm v-if="perfil === 'admin'" @update="loadUsers" :perfis="perfis" ref="userForm" />
+  <UserForm
+    v-if="perfil === 'admin'"
+    @update="loadUsers"
+    :perfis="perfis"
+    ref="userForm"
+  />
   <UserDelete v-if="perfil === 'admin'" @update="loadUsers" ref="userDelete" />
   <Snackbar ref="snackbar" />
 </template>
@@ -81,10 +96,10 @@ export default {
     itemsPerPage: 10,
     dialog: false,
     dialogDelete: false,
-    sortBy: [{ key: 'nome', order: 'asc' }] as SortItem,
+    sortBy: [{ key: "nome", order: "asc" }] as SortItem,
     headers: getHeaders(perfil),
     users: [] as User[],
-    perfis: []as Perfil[],
+    perfis: [] as Perfil[],
     loading: true,
     total: 0,
     totalAdmin: 0,
@@ -92,7 +107,7 @@ export default {
     UserForm,
     UserDelete,
     Snackbar,
-    perfil
+    perfil,
   }),
 
   mounted() {
